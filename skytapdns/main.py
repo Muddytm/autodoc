@@ -61,6 +61,7 @@ def recreate_all_vm_dns(e, create):
 
         if vm_ip_us:
             created = False
+            quit_count = 0
             while not created:
                 status, output = commands.getstatusoutput("cli53 rrcreate "
                                                           "ZXN2JBL17W6BS \'"
@@ -79,9 +80,13 @@ def recreate_all_vm_dns(e, create):
                     if (rrs["ResourceRecords"][0]["Value"] == (vm_ip_us) and
                             rrs["Name"] == vm_hostname + "-" + str(e.id) + ".skytap.fulcrum.net."):
                         created = True
-            print ("Created record set: " + vm_hostname + "-" + str(e.id) + ".skytap.fulcrum.net")
+                        print ("Created record set: " + vm_hostname + "-" + str(e.id) + ".skytap.fulcrum.net")
+
+                quit_count += 1
+
         elif vm_ip_india:
             created = False
+            quit_count = 0
             while not created:
                 status, output = commands.getstatusoutput("cli53 rrcreate "
                                                           "ZXN2JBL17W6BS \'"
@@ -100,7 +105,9 @@ def recreate_all_vm_dns(e, create):
                     if (rrs["ResourceRecords"][0]["Value"] == (vm_ip_india) and
                             rrs["Name"] == vm_hostname + "-" + str(e.id) + ".skytap.fulcrum.net."):
                         created = True
-            print ("Created record set: " + vm_hostname + "-" + str(e.id) + ".skytap.fulcrum.net")
+                        print ("Created record set: " + vm_hostname + "-" + str(e.id) + ".skytap.fulcrum.net")
+
+                quit_count += 1
 
         env_dns_alias = None
 
@@ -109,6 +116,7 @@ def recreate_all_vm_dns(e, create):
 
         if env_dns_alias:
             created = False
+            quit_count = 0
             while not created:
                 status, output = commands.getstatusoutput("cli53 rrcreate "
                                                           "ZXN2JBL17W6BS \'"
@@ -125,10 +133,13 @@ def recreate_all_vm_dns(e, create):
                 data = json.loads(output)
 
                 for rrs in data["ResourceRecordSets"]:
-                    if (rrs["ResourceRecords"][0]["Value"] == (vm_hostname + "-" + str(e.id) + ".skytap") and
-                            rrs["Name"] == vm_hostname + "-" + env_dns_alias + ".skytap.fulcrum.net."):
+                    if ((vm_hostname + "-" + str(e.id) + ".skytap.fulcrum.net") in rrs["ResourceRecords"][0]["Value"] and
+                            (vm_hostname + "-" + env_dns_alias + ".skytap.fulcrum.net") in rrs["Name"]):
                         created = True
                         print ("Created CNAME: " + vm_hostname + "-" + env_dns_alias + ".skytap.fulcrum.net")
+
+                quit_count += 1
+
 
 def delete_listed_dns(name):
     """Delete DNS names as listed in a Confluence page."""

@@ -24,6 +24,8 @@ def clean_content(content):
         # TODO: stop being lazy and try regex here
         content = content[0:content.find("ac:macro-id=")-1] + content[content.find("ac:macro-id=")+64:]
 
+    content = content.replace("<p></p>", "<p />")
+
     return content
 
 
